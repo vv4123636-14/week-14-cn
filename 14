@@ -1,0 +1,118 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#ifdef _WIN32
+#define CLEAR "cls"
+#else
+#define CLEAR "clear"
+#endif
+
+int main()
+{
+    int choice;
+    char target[200];
+    char command[600];
+
+    printf("====================================\n");
+    printf("       NMAP NETWORK SCANNER\n");
+    printf("====================================\n");
+
+    printf("Enter target IP/domain: ");
+    scanf("%199s", target);
+
+    /* Basic input validation */
+    if (strstr(target, ";") || strstr(target, "|") ||
+        strstr(target, "&") || strstr(target, "`") ||
+        strstr(target, "$") || strstr(target, ">") ||
+        strstr(target, "<") || strstr(target, "\'") ||
+        strstr(target, "\"") || strstr(target, "\\"))
+    {
+        printf("Invalid target input.\n");
+        return 1;
+    }
+
+    printf("\nSelect Scan Type:\n");
+    printf("1. Ping Scan\n");
+    printf("2. Quick Scan\n");
+    printf("3. Regular Scan\n");
+    printf("4. Intense Scan\n");
+    printf("5. Scan Specific Ports\n");
+    printf("6. Service Version Detection\n");
+    printf("7. OS Detection\n");
+    printf("8. Save Scan Results\n");
+    printf("9. Exit\n");
+
+    printf("\nEnter your choice: ");
+
+    if (scanf("%d", &choice) != 1)
+    {
+        printf("Invalid choice.\n");
+        return 1;
+    }
+
+    switch (choice)
+    {
+        case 1:
+            snprintf(command, sizeof(command),
+                     "nmap -sn %s", target);
+            break;
+
+        case 2:
+            snprintf(command, sizeof(command),
+                     "nmap -F %s", target);
+            break;
+
+        case 3:
+            snprintf(command, sizeof(command),
+                     "nmap %s", target);
+            break;
+
+        case 4:
+            snprintf(command, sizeof(command),
+                     "nmap -A %s", target);
+            break;
+
+        case 5:
+            snprintf(command, sizeof(command),
+                     "nmap -p 22,80,443 %s", target);
+            break;
+
+        case 6:
+            snprintf(command, sizeof(command),
+                     "nmap -sV %s", target);
+            break;
+
+        case 7:
+            snprintf(command, sizeof(command),
+                     "nmap -O %s", target);
+            break;
+
+        case 8:
+            snprintf(command, sizeof(command),
+                     "nmap -oN nmap_output.txt %s", target);
+            break;
+
+        case 9:
+            printf("Exiting Nmap Scanner.\n");
+            return 0;
+
+        default:
+            printf("Invalid choice.\n");
+            return 1;
+    }
+
+    printf("\nExecuting command:\n%s\n\n", command);
+    printf("========== NMAP SCAN RESULTS ==========\n\n");
+
+    int result = system(command);
+
+    if (result == 0)
+        printf("\nScan command completed.\n");
+    else
+        printf("\nScan could not be completed. Check Nmap installation and permissions.\n");
+
+    return 0;
+}
+```
